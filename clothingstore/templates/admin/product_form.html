@@ -1,0 +1,81 @@
+{% extends 'admin/dashboard.html' %}
+{% load static %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">{% if product %}Edit{% else %}Add New{% endif %} Product</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ product.name|default:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required>{{ product.description|default:'' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" value="{{ product.price|default:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="men" {% if product.category == 'men' %}selected{% endif %}>Men's Wear</option>
+                            <option value="women" {% if product.category == 'women' %}selected{% endif %}>Women's Wear</option>
+                            <option value="kid_boy" {% if product.category == 'kid_boy' %}selected{% endif %}>Kid's Boy</option>
+                            <option value="kid_girl" {% if product.category == 'kid_girl' %}selected{% endif %}>Kid's Girl</option>
+                            <option value="teen_boy" {% if product.category == 'teen_boy' %}selected{% endif %}>Teen Boy</option>
+                            <option value="teen_girl" {% if product.category == 'teen_girl' %}selected{% endif %}>Teen Girl</option>
+                            <option value="toddler_boy" {% if product.category == 'toddler_boy' %}selected{% endif %}>Toddler Boy</option>
+                            <option value="toddler_girl" {% if product.category == 'toddler_girl' %}selected{% endif %}>Toddler Girl</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clothing_type" class="form-label">Clothing Type</label>
+                        <select class="form-control" id="clothing_type" name="clothing_type" required>
+                            <option value="">Select Type</option>
+                            <option value="tops" {% if product.clothing_type == 'tops' %}selected{% endif %}>Tops</option>
+                            <option value="bottoms" {% if product.clothing_type == 'bottoms' %}selected{% endif %}>Bottoms</option>
+                            <option value="dress" {% if product.clothing_type == 'dress' %}selected{% endif %}>Dress</option>
+                            <option value="terno" {% if product.clothing_type == 'terno' %}selected{% endif %}>Terno</option>
+                            <option value="suits" {% if product.clothing_type == 'suits' %}selected{% endif %}>Suits</option>
+                            <option value="romper" {% if product.clothing_type == 'romper' %}selected{% endif %}>Romper</option>
+                            <option value="jumpsuit" {% if product.clothing_type == 'jumpsuit' %}selected{% endif %}>Jumpsuit</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Product Image</label>
+                        {% if product.image %}
+                            <div class="mb-2">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="100">
+                            </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="image" name="image" {% if not product %}required{% endif %} accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock|default:0 }}" min="0" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'admin_products' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">{% if product %}Update{% else %}Create{% endif %} Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

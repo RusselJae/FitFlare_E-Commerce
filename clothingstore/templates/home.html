@@ -1,0 +1,682 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block title %}Home - Fashion Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-banner">
+    <div class="container h-100">
+        <div class="overlay"></div>
+        <div class="row h-100 align-items-center">
+            <div class="hero-content col-lg-8 mx-auto text-center">
+                <h1 class="display-3 fw-bold text-white mb-4" data-aos="fade-down">Welcome to FitFlare</h1>
+                <p class="lead text-white mb-4" data-aos="fade-up">Elevate Your Style, Define Your Fashion</p>
+                <div data-aos="fade-up" data-aos-delay="200">
+                    <a href="{% url 'product_list' %}" class="btn btn-xl btn-light">Explore Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="display-6 fw-bold">Featured Collection</h2>
+            <div class="separator"></div>
+        </div>
+        <div class="row g-4">
+            {% for product in featured_products|slice:":3" %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:100 }}">
+                <div class="product-card h-100">
+                    <div class="product-image">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                        <div class="product-overlay">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'product_list' %}?category={{ product.category }}" 
+                                   class="btn btn-light">View Details</a>
+                                <span class="price">${{ product.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info p-3">
+                        <h5 class="mb-1">{{ product.name }}</h5>
+                        <p class="text-muted mb-0">{{ product.category }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Collection Banner -->
+<section class="collection-banner" data-aos="fade-up">
+    <div class="container">
+        <!-- Top row with two cards -->
+        <div class="row mb-4">
+            {% with first_two_products=featured_products|slice:":2" %}
+            {% for product in first_two_products %}
+            <div class="col-lg-6 mb-4">
+                <div class="collection-card">
+                    <div class="row align-items-center g-0">
+                        <div class="col-4">
+                            <div class="collection-image">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded">
+                                <div class="image-overlay"></div>
+                            </div>
+                        </div>
+                        <div class="col-8 ps-4">
+                            <div class="collection-info">
+                                <h4>{{ product.name }}</h4>
+                                <p class="text-muted mb-2">{{ product.category }}</p>
+                                <span class="price">${{ product.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+
+        <!-- Bottom row with background and third card -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="collection-bg rounded">
+                    <div class="collection-overlay"></div>
+                    <div class="collection-content text-white p-5">
+                        <h2 class="display-4 fw-bold mb-4">New Collection</h2>
+                        <p class="lead mb-4">Discover our latest arrivals</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-light btn-lg">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                {% with third_product=featured_products|slice:"2:3" %}
+                {% for product in third_product %}
+                <div class="collection-card h-100">
+                    <div class="row align-items-center g-0">
+                        <div class="col-12 mb-3">
+                            <div class="collection-image">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded">
+                                <div class="image-overlay"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 px-4">
+                            <div class="collection-info">
+                                <h4>{{ product.name }}</h4>
+                                <p class="text-muted mb-2">{{ product.category }}</p>
+                                <span class="price">${{ product.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features py-5" style="background-color: #fef8feb0;" data-aos="fade-up">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h4>Fast Delivery</h4>
+                    <p class="mb-0">Free shipping on all orders over $50</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h4>Easy Returns</h4>
+                    <p class="mb-0">30-day return policy for all items</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card h-100">
+                    <div class="icon-wrapper mb-3">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>24/7 Support</h4>
+                    <p class="mb-0">Round-the-clock customer service</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section py-5" id="about" data-aos="fade-up">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="about-image">
+                    <img src="{% static 'images/bg4.jpg' %}" alt="About FitFlare" class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+            <div class="col-lg-6 ps-lg-5" data-aos="fade-left">
+                <div class="about-content">
+                    <h2 class="display-6 fw-bold mb-4">About FitFlare</h2>
+                    <div class="separator mb-4"></div>
+                    <p class="lead mb-4">Welcome to FitFlare, where style meets comfort and quality meets affordability.</p>
+                    <p class="mb-4">At FitFlare, we believe that fashion should be accessible to everyone. Our carefully curated collection features the latest trends and timeless classics that help you express your unique style.</p>
+                    <div class="row g-4 mb-4">
+                        <div class="col-sm-6">
+                            <div class="about-feature">
+                                <i class="fas fa-tshirt mb-3"></i>
+                                <h5>Quality Fashion</h5>
+                                <p>Premium materials and expert craftsmanship</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="about-feature">
+                                <i class="fas fa-leaf mb-3"></i>
+                                <h5>Sustainable</h5>
+                                <p>Eco-friendly practices and materials</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'about' %}" class="btn btn-primary btn-lg">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section py-5 bg-light" id="contact" data-aos="fade-up">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-3">Contact Us</h2>
+                <div class="separator mb-4"></div>
+                <p class="lead text-muted">Have questions? We'd love to hear from you!</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.15830869428!2d-74.11976397304603!3d40.697403442292486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1645645678990!5m2!1sen!2sus"
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="contact-info h-100">
+                    <div class="contact-card mb-4">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h5>Visit Us</h5>
+                            <p class="mb-0">123 Fashion Street</p>
+                            <p class="mb-0">New York, NY 10001</p>
+                        </div>
+                    </div>
+                    <div class="contact-card mb-4">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h5>Call Us</h5>
+                            <p class="mb-0">(123) 456-7890</p>
+                            <p class="mb-0">(321) 987-6543</p>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-content">
+                            <h5>Email Us</h5>
+                            <p class="mb-0">info@fitflare.com</p>
+                            <p class="mb-0">support@fitflare.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+:root {
+    --primary: #ff1493;
+    --primary-dark: #d4006c;
+    --light: #fff0f5;
+}
+
+.hero-banner {
+    height: 100vh;
+    min-height: 600px;
+    background-image: url("{% static 'images/banner2.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    margin-top: -76px;
+}
+
+.overlay {
+    background: rgba(246, 136, 185, 0.5);
+    position: absolute;
+    top: 10px;
+    left: 113px;
+    right: 0;
+    bottom: 0;
+    width: 1296px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-xl {
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.section-header .separator {
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+    margin: 1rem auto;
+}
+
+.featured-products {
+    padding: 6rem 0;
+    background: var(--light);
+}
+
+.product-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-image {
+    position: relative;
+    overflow: hidden;
+    padding-top: 100%;
+}
+
+.product-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    padding: 1rem;
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+.price {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.collection-banner {
+    padding: 4rem 0;
+    background: linear-gradient(to bottom, var(--light) 0%, #fff 100%);
+}
+
+.collection-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 100%;
+}
+
+.collection-bg {
+    height: 100%;
+    background-image: url("{% static 'images/bg3.avif' %}");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.collection-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+}
+
+.collection-content {
+    position: relative;
+    z-index: 1;
+}
+
+.collection-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.collection-image img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(255,20,147,0) 0%, rgba(255,20,147,0.2) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.collection-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 20, 147, 0.15);
+}
+
+.collection-card:hover .image-overlay {
+    opacity: 1;
+}
+
+.collection-card:hover .collection-image img {
+    transform: scale(1.1);
+}
+
+.product-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.btn-hover {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-hover span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.btn-hover i {
+    transform: translateX(-10px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.btn-hover:hover span {
+    transform: translateX(-5px);
+}
+
+.btn-hover:hover i {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Season Collection Styles */
+.season-collection {
+    position: relative;
+}
+
+.season-tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.5s ease forwards;
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.collection-bg {
+    height: 700px;
+    background-image: url("{% static 'images/bg.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.collection-overlay {
+    background: linear-gradient(to bottom,
+        rgba(0,0,0,0.3) 0%,
+        rgba(0,0,0,0.7) 100%);
+}
+
+.collection-content {
+    position: relative;
+    z-index: 1;
+}
+
+.features {
+    padding: 6rem 0;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-wrapper {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 2rem;
+    background: var(--light);
+    color: var(--primary);
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.about-section {
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-image img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.05);
+}
+
+.about-content {
+    padding: 2rem 0;
+}
+
+.about-feature {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.about-feature:hover {
+    transform: translateY(-5px);
+    background: #ffe6f3;
+}
+
+.about-feature i {
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+.about-feature h5 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.about-feature p {
+    color: #666;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.contact-section {
+    background-color: var(--light);
+}
+
+.contact-info {
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.contact-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: calc(450px / 3 - 1rem);
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.contact-card .icon-wrapper {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    line-height: 50px;
+    font-size: 1.25rem;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-card .contact-content {
+    flex: 1;
+}
+
+.contact-card h5 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+/* Update responsive styles */
+@media (max-width: 768px) {
+    .contact-info {
+        height: auto;
+        margin-bottom: 2rem;
+    }
+    
+    .contact-card {
+        height: auto;
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+    }
+}
+
+.map-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        height: 70vh;
+    }
+    
+    .collection-bg {
+        height: 400px;
+    }
+    
+    .about-image img {
+        height: 300px;
+    }
+    
+    .about-content {
+        text-align: center;
+    }
+    
+    .contact-info {
+        margin-bottom: 2rem;
+    }
+    
+    .contact-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}

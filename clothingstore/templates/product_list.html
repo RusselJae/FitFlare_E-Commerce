@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load custom_filters %}
+
+
+{% block title %}Products - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 4rem; margin-bottom: 10rem;">
+    <!-- Centered Header -->
+    <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center">
+            <i class="fas fa-store me-3" style="font-size: 2.5rem; color: #6a3ea1;"></i>
+            <h1 style="font-weight: 700;">Our Products</h1>
+        </div>
+        <hr class="mx-auto mt-3 mb-4" style="border-color: #6a3ea1; opacity: 0.3; width: 200px;">
+    </div>
+
+    <!-- Filters and Search Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Search Bar -->
+                        <div class="col-md-3 mb-3">
+                            <form method="get" class="d-flex">
+                                <div class="input-group">
+                                    <input type="text" 
+                                           name="search" 
+                                           class="form-control" 
+                                           placeholder="Search products..." 
+                                           value="{{ search_query|default:'' }}">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Filters -->
+                        <div class="col-md-9">
+                            <form method="get" class="row">
+                                {% if search_query %}
+                                <input type="hidden" name="search" value="{{ search_query }}">
+                                {% endif %}
+                                <div class="col-md-3">
+                                    <select class="form-select" name="category">
+                                        {% for value, label in categories %}
+                                        <option value="{{ value }}" {% if value == selected_category %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" name="clothing_type">
+                                        {% for value, label in clothing_types %}
+                                        <option value="{{ value }}" {% if value == selected_clothing_type %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" name="price_range">
+                                        {% for value, label in price_ranges %}
+                                        <option value="{{ value }}" {% if value == selected_price_range %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-md-4 mb-4" data-product-id="{{ product.id }}">
+                <div class="card h-100">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">
+                            <span class="badge bg-secondary">{{ product.get_category_display }}</span>
+                        </p>
+                        <p class="card-text text-truncate">{{ product.description }}</p>
+                        <p class="card-text">${{ product.price }}</p>
+                        <p class="card-text {% if product.stock < 10 %}text-danger{% endif %}">
+                            {% if product.stock > 0 %}
+                                {{ product.stock }} pieces left
+                            {% else %}
+                                <span class="text-danger">Out of stock</span>
+                            {% endif %}
+                        </p>
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center mb-3">
+                                <label class="me-2">Quantity:</label>
+                                <input type="number" 
+                                       class="form-control form-control-sm quantity-input" 
+                                       value="1" 
+                                       min="1" 
+                                       max="{{ product.stock }}"
+                                       style="width: 70px;"
+                                       data-product-id="{{ product.id }}">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary add-to-cart" 
+                                        data-product-id="{{ product.id }}"
+                                        {% if product.stock == 0 %}disabled{% endif %}
+                                        style="background-color: #d7cee6; border-color: #d7cee6; color: #472a6b;">
+                                    Add to Cart
+                                </button>
+                                <button class="btn btn-primary buy-now" 
+                                        data-product-id="{{ product.id }}"
+                                        {% if product.stock == 0 %}disabled{% endif %}
+                                        >
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No products available at the moment.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if products.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Last &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Check if user is authenticated
+        const isAuthenticated = {{ request.user.is_authenticated|lower }};
+        if (!isAuthenticated) {
+            window.location.href = "{% url 'login' %}?next={{ request.path }}";
+            return;
+        }
+
+        const productId = this.dataset.productId;
+        const quantityInput = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+        const quantity = parseInt(quantityInput.value);
+        
+        if (quantity < 1) {
+            alert('Please select a valid quantity');
+            return;
+        }
+
+        fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Product added to cart successfully!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding product to cart');
+        });
+    });
+});
+
+// Buy Now functionality
+document.querySelectorAll('.buy-now').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Check if user is authenticated
+        const isAuthenticated = {{ request.user.is_authenticated|lower }};
+        if (!isAuthenticated) {
+            window.location.href = "{% url 'login' %}?next={{ request.path }}";
+            return;
+        }
+
+        const productId = this.dataset.productId;
+        const quantityInput = document.querySelector(`.quantity-input[data-product-id="${productId}"]`);
+        const quantity = parseInt(quantityInput.value);
+        
+        if (quantity < 1) {
+            alert('Please select a valid quantity');
+            return;
+        }
+
+        // Add to cart then redirect to checkout
+        fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '{% url "checkout" %}';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error processing your request');
+        });
+    });
+});
+
+// Validate quantity input
+document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('change', function() {
+        const max = parseInt(this.getAttribute('max'));
+        const value = parseInt(this.value);
+        
+        if (value > max) {
+            this.value = max;
+            alert('Cannot exceed available stock');
+        } else if (value < 1) {
+            this.value = 1;
+        }
+    });
+});
+
+// Create a function to handle product updates
+function handleProductUpdate() {
+    // Listen for product deletion events
+    window.addEventListener('productDeleted', function(event) {
+        const productId = event.detail.productId;
+        const productCard = document.querySelector(`.col-md-4[data-product-id="${productId}"]`);
+        if (productCard) {
+            productCard.remove();
+            
+            // Check if there are no more products
+            const productsContainer = document.querySelector('.row');
+            if (!productsContainer.querySelector('.col-md-4')) {
+                productsContainer.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            No products available at the moment.
+                        </div>
+                    </div>`;
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', handleProductUpdate);
+</script>
+{% endblock %}

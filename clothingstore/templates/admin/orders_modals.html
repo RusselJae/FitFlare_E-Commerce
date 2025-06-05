@@ -1,0 +1,96 @@
+{% for order in page_obj %}
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderModal{{ order.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order #{{ order.id }} Details</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p>Name: {{ order.first_name }} {{ order.last_name }}<br>
+                           Email: {{ order.user.email }}<br>
+                           Address: {{ order.address }}<br>
+                           {{ order.city }}, {{ order.state }} {{ order.zip_code }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Order Information</h6>
+                        <p>Date: {{ order.created_at|date:"M d, Y H:i" }}<br>
+                           Status: {{ order.get_status_display }}<br>
+                           Payment ID: {{ order.payment_id }}<br>
+                           Payment Method: {{ order.payment_method|title }}</p>
+                    </div>
+                </div>
+                <h6>Order Items</h6>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.get_total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total Amount:</strong></td>
+                                <td><strong>${{ order.total_amount }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <!-- Order Status Update Form -->
+                <form method="post" action="{% url 'update_order_status' order.id %}" class="mt-3">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="status">Update Status:</label>
+                        <select name="status" class="form-control">
+                            {% for value, label in order_statuses %}
+                            <option value="{{ value }}" {% if value == order.status %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Update Status</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+.modal-lg {
+    max-width: 800px;
+}
+
+.table-responsive {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+</style>

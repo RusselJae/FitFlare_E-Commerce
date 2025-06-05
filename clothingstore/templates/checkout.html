@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Checkout - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-center mb-4">
+        <i class="fas fa-credit-card me-3" style="font-size: 2.5rem; color: #ff1493;"></i>
+        <h1 style="font-weight: 700;">Checkout</h1>
+    </div>
+    <hr class="mb-4" style="border-color: #ff1493; opacity: 0.3;">
+
+    <div class="row">
+        <!-- Order Summary (Full Width at Top) -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="mb-3 text-center">Order Summary</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            {% for item in selected_items %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                                <span>${{ item.get_total }}</span>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span>${{ total_amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping</span>
+                                <span>$0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong>Total</strong>
+                                <strong>${{ total_amount }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Information (Full Width Below) -->
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="mb-4 text-center">Shipping Information</h3>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <form method="POST" id="checkout-form">
+                                {% csrf_token %}
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" name="first_name" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" name="last_name" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" name="address" class="form-control" required>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">City</label>
+                                        <input type="text" name="city" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">State</label>
+                                        <input type="text" name="state" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">ZIP Code</label>
+                                    <input type="text" name="zip_code" class="form-control" required>
+                                </div>
+                                <hr>
+                                <h3 class="mb-4 text-center">Payment Information</h3>
+                                <div id="paypal-button-container"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Add more spacing from navbar and footer */
+    .container.py-5 {
+        min-height: calc(100vh - 400px);
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important; /* Reduced from 10rem to 4rem */
+        margin-bottom: 0; /* Removed 2rem margin */
+    }
+
+    /* Card styling */
+    .card {
+        border: none;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    /* Header color */
+    h1, h3, h4 {
+        color: #ff1493;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+<script>
+    // Validate form before enabling PayPal button
+    const form = document.getElementById('checkout-form');
+    const inputs = form.querySelectorAll('input[required]');
+    const paypalContainer = document.getElementById('paypal-button-container');
+
+    // Initially render PayPal buttons
+    const paypalButtons = paypal.Buttons({
+        createOrder: function (data, actions) {
+            // Validate form before creating order
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return false;
+            }
+
+            const amount = '{{ total_amount }}';
+            // Ensure amount is formatted with 2 decimal places
+            const formattedAmount = parseFloat(amount).toFixed(2);
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: formattedAmount,
+                        currency_code: 'USD'
+                    }
+                }]
+            });
+        },
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                // Add payment ID to form
+                const paymentIdInput = document.createElement('input');
+                paymentIdInput.type = 'hidden';
+                paymentIdInput.name = 'paymentId';
+                paymentIdInput.value = details.id;
+                form.appendChild(paymentIdInput);
+
+                // Add total amount to form
+                const amountInput = document.createElement('input');
+                amountInput.type = 'hidden';
+                amountInput.name = 'amount';
+                amountInput.value = '{{ total_amount }}';
+                form.appendChild(amountInput);
+
+                // Create an array to store selected item IDs
+                const selectedItems = [{% for item in selected_items %}'{{ item.id }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+                
+                // Add selected items to form
+                selectedItems.forEach(itemId => {
+                    const itemInput = document.createElement('input');
+                    itemInput.type = 'hidden';
+                    itemInput.name = 'selected_items';
+                    itemInput.value = itemId;
+                    form.appendChild(itemInput);
+                });
+
+                // Submit the form
+                form.submit();
+            });
+        },
+        onError: function (err) {
+            console.error('PayPal Error:', err);
+            alert('There was an error processing your payment. Please try again.');
+        }
+    });
+
+    // Auto-populate form fields if user is logged in
+    const userFirstName = '{{ user.first_name|default:"" }}';
+    const userLastName = '{{ user.last_name|default:"" }}';
+    if (userFirstName) {
+        document.querySelector('input[name="first_name"]').value = userFirstName;
+        document.querySelector('input[name="last_name"]').value = userLastName;
+    }
+
+    // Render PayPal buttons immediately
+    paypalButtons.render('#paypal-button-container');
+</script>
+{% endblock %}

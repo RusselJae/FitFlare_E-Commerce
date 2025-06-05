@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmation - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card">
+        <div class="card-body text-center">
+            <h1 class="display-4 text-success mb-4">
+                <i class="fas fa-check-circle"></i>
+            </h1>
+            <h2 class="mb-4">Thank You for Your Order!</h2>
+            <p class="lead">Your order has been successfully placed.</p>
+            <p>Order Number: #{{ order.id }}</p>
+            <p>Total Amount: ${{ order.total_amount }}</p>
+            <hr>
+            <p>We'll send you an email with your order details and tracking information.</p>
+            <div class="mt-4">
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

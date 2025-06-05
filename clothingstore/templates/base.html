@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FitFlare{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern E-commerce Styling with Violet Theme */
+        :root {
+            --primary-color: #ff1493;     /* Deep pink */
+            --secondary-color: #ff69b4;   /* Hot pink */
+            --light-color: #ffb6c1;       /* Light pink */
+            --dark-color: #1a1a1a;        /* Near black */
+            --text-color: #000000;        /* Black */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: white !important;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            color: var(--dark-color) !important;
+            transition: all 0.3s ease;
+            padding: 0.8rem 1rem !important;
+            margin: 0.2rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            margin-right: 8px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link:hover {
+            background-color: var(--light-color);
+            color: var(--dark-color) !important;
+        }
+
+        .nav-link.active {
+            background-color: var(--dark-violet);
+            color: white !important;
+        }
+
+        /* Dropdown Styling */
+        .dropdown-menu {
+            background-color: white;
+            border: 1px solid var(--light-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            color: var(--dark-color);
+            padding: 0.7rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            transform: translateX(5px);
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #f3beda;
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links li a:hover {
+            color: var(--light-violet);
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Newsletter Form */
+        .newsletter-form .form-control {
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--light-violet);
+        }
+
+        .newsletter-form .btn {
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            background-color: var(--primary-violet);
+            opacity: 0.9;
+        }
+
+        .scroll-top:hover {
+            background-color: var(--dark-violet);
+        }
+
+        /* Page Loader */
+        .loader {
+            border-top-color: var(--primary-violet);
+        }
+        #logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" id="logo" href="{% url 'home' %}">
+                FitFlare
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">Fit Flare</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+                        </li>
+                        <li class="nav-item">
+                            {% if request.path == '/' %}
+                                <a class="nav-link scroll-link" href="#about"><i class="fas fa-info-circle"></i> About</a>
+                            {% else %}
+                                <a class="nav-link" href="{% url 'home' %}#about"><i class="fas fa-info-circle"></i> About</a>
+                            {% endif %}
+                        </li>
+                        <li class="nav-item">
+                            {% if request.path == '/' %}
+                                <a class="nav-link scroll-link" href="#contact"><i class="fas fa-envelope"></i> Contact</a>
+                            {% else %}
+                                <a class="nav-link" href="{% url 'home' %}#contact"><i class="fas fa-envelope"></i> Contact</a>
+                            {% endif %}
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-tags"></i> Categories
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for value, label in categories %}
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}?category={{ value }}">{{ label }}</a></li>
+                                {% endfor %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}">All Categories</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="clothingTypeDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-tshirt"></i> Clothing Types
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for value, label in clothing_types %}
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}?clothing_type={{ value }}">{{ label }}</a></li>
+                                {% endfor %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}">All Types</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                                <li><a class="dropdown-item" href="{% url 'order_history' %}"><i class="fas fa-history"></i> Order History</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'account_settings' %}"><i class="fas fa-cog"></i> Account Settings</a></li>
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fas fa-user-shield"></i> Admin Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-5 pt-4">
+        {% block content %}
+        <div data-aos="fade-up" data-aos-duration="1000">
+            <!-- Your content -->
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-dark py-5" style="background-color: #ffcfd6;">
+        <div class="container">
+            <div class="row">
+                                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3" style="font-weight: bold;" >NEWSLETTER</h5>
+                    <p class="mb-3">Subscribe to get special offers and updates!</p>
+                    <form class="mb-3">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                    <div class="contact-infos text-dark">
+                        <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                        <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@fashionstore.com</p>
+                        <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> 123 Fashion Street, NY 10001</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3" style="font-weight: bold;" >QUICK LINKS</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'about' %}" class="text-dark text-decoration-none">About
+                                Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Shop Now</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Track Order</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3" style="font-weight: bold;" >CUSTOMER SERVICE</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Shipping Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Returns & Exchanges</a>
+                        </li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Size Guide</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3" style="font-weight: bold;">FITFLARE</h5>
+                    <p class="mb-3">Your one-stop destination for trendy fashion and accessories. Quality products at
+                        the best prices.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-dark me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-dark me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-dark"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" style="background-color: rgba(0,0,0,0.1);">
+            <div class="text-center text-dark">
+                <p class="mb-0">&copy; 2025 FitFlare. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-code-here.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init();
+
+        // Page Loader
+        window.addEventListener('load', function () {
+            document.querySelector('.page-loader').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.page-loader').style.display = 'none';
+            }, 300);
+        });
+
+        // Scroll to Top Button
+        window.addEventListener('scroll', function () {
+            const scrollTop = document.querySelector('.scroll-top');
+            if (window.pageYOffset > 200) {
+                scrollTop.classList.add('active');
+            } else {
+                scrollTop.classList.remove('active');
+            }
+        });
+
+        document.querySelector('.scroll-top').addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.pageYOffset > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                navbar.style.padding = '20px 0';
+                navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+
+        // Add this to your existing scripts
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('section').forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        // Handle initial hash on page load
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
+                const targetElement = document.querySelector(window.location.hash);
+                if (targetElement) {
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

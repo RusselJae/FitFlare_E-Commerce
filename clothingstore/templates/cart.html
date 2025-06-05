@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center mb-2 justify-content-center">
+        <i class="fas fa-shopping-cart me-3" style="font-size: 2.5rem; color: #ff1493;"></i>
+        <h1 style="font-weight: 700;">Shopping Cart</h1>
+    </div>
+    <hr class="mb-4" style="border-color: #ff1493; opacity: 0.3;">
+
+    <form id="cart-form" action="{% url 'checkout' %}" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Cart Items Full Width -->
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-body" style="max-height: 60vh; overflow-y: auto;">
+                        {% if cart_items %}
+                            {% for item in cart_items %}
+                            <div class="row mb-4 align-items-center cart-item" data-id="{{ item.id }}">
+                                <!-- Cart item content remains the same -->
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="selected_items" value="{{ item.id }}" class="form-check-input item-checkbox">
+                                </div>
+                                <div class="col-md-2">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid">
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>{{ item.product.name }}</h5>
+                                    <p class="text-muted">{{ item.product.get_category_display }}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control quantity-input" 
+                                               value="{{ item.quantity }}" min="1" 
+                                               max="{{ item.product.stock }}"
+                                               data-item-id="{{ item.id }}"
+                                               data-price="{{ item.product.price }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <p class="mb-0 item-total">${{ item.get_total }}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-sm btn-danger remove-item" data-item-id="{{ item.id }}">Remove</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-center mb-0">Your cart is empty.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Below -->
+            <div class="col-12">
+                <div class="card" style="position: sticky; bottom: 0; z-index: 100; background: white;">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal</span>
+                                    <span id="subtotal">${{ subtotal }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping</span>
+                                    <span>$0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <strong>Total</strong>
+                                    <strong id="total">${{ total }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary checkout-btn">Proceed to Checkout</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Update spacing and layout styles */
+    .container.py-5 {
+        min-height: calc(100vh - 400px);
+        padding-top: 4rem !important;
+        padding-bottom: 2rem !important; /* Reduced bottom padding */
+        margin-bottom: 0; /* Removed margin bottom */
+    }
+
+    /* Make order summary card stick to bottom */
+    .card[style*="position: sticky"] {
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        margin-top: 1rem; /* Added gap above order summary */
+        margin-bottom: 0; /* Removed bottom margin */
+    }
+
+    /* Scrollable cart items area */
+    .card-body[style*="max-height"] {
+        scrollbar-width: thin;
+        scrollbar-color: #6a3ea1 #f0f0f0;
+    }
+
+    .card-body[style*="max-height"]::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .card-body[style*="max-height"]::-webkit-scrollbar-track {
+        background: #f0f0f0;
+    }
+
+    .card-body[style*="max-height"]::-webkit-scrollbar-thumb {
+        background-color: #6a3ea1;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add this to handle cart form submission
+document.getElementById('cart-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get selected items
+    const selectedItems = Array.from(document.querySelectorAll('.item-checkbox:checked'))
+        .map(checkbox => checkbox.value);
+    
+    if (selectedItems.length === 0) {
+        alert('Please select at least one item to checkout');
+        return;
+    }
+    
+    // Store selected items in session and proceed to checkout
+    fetch('{% url "store_cart_selection" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            selected_items: selectedItems
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            this.submit();
+        }
+    });
+});
+
+// Function to update order summary
+function updateOrderSummary() {
+    const selectedItems = document.querySelectorAll('.item-checkbox:checked');
+    let subtotal = 0;
+    
+    selectedItems.forEach(checkbox => {
+        const cartItem = checkbox.closest('.cart-item');
+        const quantityInput = cartItem.querySelector('.quantity-input');
+        const price = parseFloat(quantityInput.dataset.price);
+        const quantity = parseInt(quantityInput.value);
+        subtotal += price * quantity;
+    });
+
+    // If no items selected, set to 0
+    if (selectedItems.length === 0) {
+        subtotal = 0;
+    }
+
+    // Update the display
+    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+}
+
+// Handle quantity changes
+document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('change', function() {
+        const itemId = this.dataset.itemId;
+        const quantity = parseInt(this.value);
+        const max = parseInt(this.getAttribute('max'));
+
+        // Validate quantity
+        if (quantity > max) {
+            this.value = max;
+            alert('Cannot exceed available stock');
+            return;
+        } else if (quantity < 1) {
+            this.value = 1;
+            return;
+        }
+
+        // Update quantity in backend
+        fetch(`/update-cart/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update item total
+                const itemTotal = this.closest('.cart-item').querySelector('.item-total');
+                itemTotal.textContent = '$' + data.item_total;
+                // Update order summary
+                updateOrderSummary();
+            } else {
+                alert(data.message || 'Error updating quantity');
+            }
+        });
+    });
+});
+
+// Handle remove item buttons
+document.querySelectorAll('.remove-item').forEach(button => {
+    button.addEventListener('click', function() {
+        const itemId = this.dataset.itemId;
+        
+        fetch(`/remove-from-cart/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove item from DOM
+                this.closest('.cart-item').remove();
+                // Update order summary
+                updateOrderSummary();
+                // If cart is empty, show empty message
+                if (document.querySelectorAll('.cart-item').length === 0) {
+                    document.querySelector('.card-body').innerHTML = 
+                        '<p class="text-center mb-0">Your cart is empty.</p>';
+                }
+            }
+        });
+    });
+});
+
+// Handle checkbox changes
+document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', updateOrderSummary);
+});
+
+// Initial update of order summary
+updateOrderSummary();
+</script>
+{% endblock %}
