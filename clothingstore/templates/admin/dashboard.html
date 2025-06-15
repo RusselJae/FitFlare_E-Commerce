@@ -43,10 +43,10 @@
             </div>
             <div class="col-lg-3">
                 <div class="info-box bg-danger">
-                    <span class="info-box-icon"><i class="fas fa-dollar-sign"></i></span>
+                    <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total Sales</span>
-                        <span class="info-box-number">${{ total_sales|floatformat:2 }}</span>
+                        <span class="info-box-number">₱{{ total_sales|floatformat:2 }}</span>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                                     <td>#{{ order.id }}</td>
                                     <td>{{ order.user.get_full_name|default:order.user.username }}</td>
                                     <td>{{ order.created_at|date:"M d, Y" }}</td>
-                                    <td>${{ order.total_amount }}</td>
+                                    <td>₱{{ order.total_amount }}</td>
                                     <td>
                                         <span class="badge {% if order.status == 'delivered' %}bg-success
                                     {% elif order.status == 'pending' %}bg-warning

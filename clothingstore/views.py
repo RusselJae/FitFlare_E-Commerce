@@ -25,6 +25,7 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from .forms import CustomUserCreationForm
 from django.db import models
+from django.contrib.auth import update_session_auth_hash
 
 #user authentication views
 
@@ -312,15 +313,43 @@ def order_receipt(request, order_id):
 @login_required
 def account_settings(request):
     if request.method == 'POST':
-        # Handle form submission
         user = request.user
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
         user.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('account_settings')
+    return render(request, 'account_settings.html')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Verify current password
+        if not request.user.check_password(current_password):
+            messages.error(request, 'Current password is incorrect')
+            return redirect('account_settings')
+        
+        # Check if new passwords match
+        if new_password != confirm_password:
+            messages.error(request, 'New passwords do not match')
+            return redirect('account_settings')
+        
+        # Update password
+        request.user.set_password(new_password)
+        request.user.save()
+        
+        # Update session to prevent logout
+        update_session_auth_hash(request, request.user)
+        
+        messages.success(request, 'Password updated successfully!')
         return redirect('account_settings')
     
-    return render(request, 'account_settings.html')
+    return redirect('account_settings')
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -546,29 +575,16 @@ def admin_user_create(request):
 
 @user_passes_test(is_admin)
 def admin_user_delete(request, pk):
-    if request.method == 'DELETE':
-        try:
-            user = get_object_or_404(User, pk=pk)
-            if user == request.user:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'You cannot delete your own account'
-                }, status=400)
-            username = user.username
-            user.delete()
-            return JsonResponse({
-                'success': True,
-                'message': f'User "{username}" deleted successfully'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': str(e)
-            }, status=500)
-    return JsonResponse({
-        'success': False,
-        'message': 'Invalid request method'
-    }, status=400)
+    if request.method == 'POST':
+        user = get_object_or_404(User, pk=pk)
+        # Don't allow deleting the last superuser
+        if user.is_superuser and User.objects.filter(is_superuser=True).count() <= 1:
+            messages.error(request, 'Cannot delete the last superuser')
+            return redirect('admin_users')
+        username = user.username
+        user.delete()
+        messages.success(request, f'User "{username}" deleted successfully')
+    return redirect('admin_users')
 
 @user_passes_test(is_admin)
 def admin_products(request):
@@ -769,4 +785,13 @@ def update_order_status(request, order_id):
             messages.success(request, f'Order #{order.id} status updated successfully')
         else:
             messages.error(request, 'Invalid status')
+    return redirect('admin_orders')
+
+@user_passes_test(is_admin)
+def admin_order_delete(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        order_id = order.id
+        order.delete()
+        messages.success(request, f'Order #{order_id} deleted successfully')
     return redirect('admin_orders')
