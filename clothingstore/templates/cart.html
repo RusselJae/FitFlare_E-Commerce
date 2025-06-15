@@ -8,7 +8,7 @@
         <i class="fas fa-shopping-cart me-3" style="font-size: 2.5rem; color: #ff1493;"></i>
         <h1 style="font-weight: 700;">Shopping Cart</h1>
     </div>
-    <hr class="mb-4" style="border-color: #ff1493; opacity: 0.3;">
+    <hr class="mb-4" style="border-color: ; opacity: 0.3;">
 
     <form id="cart-form" action="{% url 'checkout' %}" method="POST">
         {% csrf_token %}
@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <p class="mb-0 item-total">${{ item.get_total }}</p>
+                                    <p class="mb-0 item-total">₱{{ item.get_total }}</p>
                                 </div>
                                 <div class="col-md-2">
                                     <button type="button" class="btn btn-sm btn-danger remove-item" data-item-id="{{ item.id }}">Remove</button>
@@ -63,15 +63,15 @@
                             <div class="col-md-8">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Subtotal</span>
-                                    <span id="subtotal">${{ subtotal }}</span>
+                                    <span id="subtotal">₱{{ subtotal }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Shipping</span>
-                                    <span>$0.00</span>
+                                    <span>₱0.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-3">
                                     <strong>Total</strong>
-                                    <strong id="total">${{ total }}</strong>
+                                    <strong id="total">₱{{ total }}</strong>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -177,8 +177,8 @@ function updateOrderSummary() {
     }
 
     // Update the display
-    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-    document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('subtotal').textContent = `₱${subtotal.toFixed(2)}`;
+    document.getElementById('total').textContent = `₱${subtotal.toFixed(2)}`;
 }
 
 // Handle quantity changes
@@ -212,7 +212,7 @@ document.querySelectorAll('.quantity-input').forEach(input => {
             if (data.success) {
                 // Update item total
                 const itemTotal = this.closest('.cart-item').querySelector('.item-total');
-                itemTotal.textContent = '$' + data.item_total;
+                itemTotal.textContent = '₱' + data.item_total;
                 // Update order summary
                 updateOrderSummary();
             } else {

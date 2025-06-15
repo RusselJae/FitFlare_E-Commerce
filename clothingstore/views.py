@@ -60,12 +60,12 @@ def product_list(request):
     
     # Filter by price range if selected
     if price_range:
-        if price_range == 'under_50':
-            products = products.filter(price__lt=50)
-        elif price_range == '50_100':
-            products = products.filter(price__gte=50, price__lte=100)
-        elif price_range == 'over_100':
-            products = products.filter(price__gt=100)
+        if price_range == 'under_500':
+            products = products.filter(price__lt=500)
+        elif price_range == '500_1000':
+            products = products.filter(price__gte=500, price__lte=1000)
+        elif price_range == 'over_1000':
+            products = products.filter(price__gt=1000)
     
     # Add pagination
     paginator = Paginator(products, 9)  # Show 9 products per page
@@ -81,9 +81,9 @@ def product_list(request):
         'clothing_types': [('all', 'All Types')] + list(Product.CLOTHING_TYPE_CHOICES),
         'price_ranges': [
             ('all', 'All Prices'),
-            ('under_50', 'Under $50'), 
-            ('50_100', '$50 - $100'),
-            ('over_100', 'Over $100')
+            ('under_500', 'Under ₱500'), 
+            ('500_1000', '₱500 - ₱1000'),
+            ('over_1000', 'Over ₱1000')
         ]
     }
     return render(request, 'product_list.html', context)

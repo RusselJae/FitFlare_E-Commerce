@@ -129,6 +129,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 PAYPAL_CLIENT_ID = 'ATALtsbpmSztlY2rMLB823RB4yWqTsrMmKMrNpCHIuPh4dW2D61iTS7TuEpYDMkvhAGcezkW-lxrewTK'
 PAYPAL_CLIENT_SECRET = 'EGaHu9tVGUoz5ycf-_0CYPmNgP_IdDbDYjUwsheND2pj3091XIMKV2L0bf01qHBlzy1E2M6EZCVCLK2Q'
 PAYPAL_MODE = 'sandbox'
+PAYPAL_CURRENCY = 'PHP'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

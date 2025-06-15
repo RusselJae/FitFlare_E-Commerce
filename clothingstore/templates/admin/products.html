@@ -80,7 +80,7 @@
                             <td>{{ product.name }}</td>
                             <td>{{ product.get_category_display }}</td>
                             <td>{{ product.get_clothing_type_display }}</td>
-                            <td>${{ product.price }}</td>
+                            <td>₱{{ product.price }}</td>
                             <td>{{ product.stock }}</td>
                             <td>
                                 <a href="{% url 'admin_product_edit' product.id %}" class="btn btn-sm btn-info">
