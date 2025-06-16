@@ -11,11 +11,11 @@
     <!-- Centered Header -->
     <div class="text-center mb-4">
         <div class="d-inline-flex align-items-center">
-            <i class="fas fa-store me-3" style="font-size: 2.5rem; color: #ff1493;"></i>
+            <i class="fas fa-store me-3" style="font-size: 2.5rem; color: #9c3f61;"></i>
             <h1 style="font-weight: 700;">Our Products</h1>
         </div>
     </div>
-    <hr class=" mb-4" style="border-color: #ff1493; opacity: 0.3;">
+    <hr class=" mb-4" style="border-color: #9c3f61; opacity: 0.3;">
 
     <!-- Filters and Search Section -->
     <div class="row mb-4">
@@ -118,7 +118,7 @@
                                 <button class="btn btn-primary add-to-cart" 
                                         data-product-id="{{ product.id }}"
                                         {% if product.stock == 0 %}disabled{% endif %}
-                                        style="background-color: #d7cee6; border-color: #d7cee6; color: #472a6b;">
+                                        style="background-color: #e1c5c088; border-color: #E1C5C0; color: #472a6b;">
                                     Add to Cart
                                 </button>
                                 <button class="btn btn-primary buy-now" 
@@ -148,10 +148,10 @@
         <ul class="pagination justify-content-center">
             {% if products.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">&laquo; First</a>
+                    <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">&laquo; First</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Previous</a>
+                    <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
                 </li>
             {% endif %}
 
@@ -162,17 +162,17 @@
                     </li>
                 {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">{{ num }}</a>
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
 
             {% if products.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Next</a>
+                    <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}">Last &raquo;</a>
+                    <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_clothing_type %}&clothing_type={{ selected_clothing_type }}{% endif %}{% if selected_price_range %}&price_range={{ selected_price_range }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Last &raquo;</a>
                 </li>
             {% endif %}
         </ul>

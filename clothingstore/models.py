@@ -57,6 +57,7 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_order_number = models.PositiveIntegerField(default=1)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
@@ -70,6 +71,16 @@ class Order(models.Model):
     payment_id = models.CharField(max_length=100, null=True, blank=True)
     payment_status = models.CharField(max_length=20, default='pending')
     payment_method = models.CharField(max_length=20, default='paypal')
+
+    @classmethod
+    def get_next_order_number(cls, user):
+        last_order = cls.objects.filter(user=user).order_by('-user_order_number').first()
+        return (last_order.user_order_number + 1) if last_order else 1
+
+    def save(self, *args, **kwargs):
+        if not self.user_order_number:
+            self.user_order_number = self.get_next_order_number(self.user)
+        super().save(*args, **kwargs)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)

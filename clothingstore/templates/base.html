@@ -17,11 +17,13 @@
     <style>
         /* Modern E-commerce Styling with Violet Theme */
         :root {
-            --primary-color: #ff1493;     /* Deep pink */
-            --secondary-color: #ff69b4;   /* Hot pink */
-            --light-color: #ffb6c1;       /* Light pink */
+            --primary-color: #9c3f61;     /* Deep pink */
+            --secondary-color: rgba(225, 197, 192, 0.862);   /* Hot pink */
+            --light-color: #F2E8E6;       /* Light pink */
             --dark-color: #1a1a1a;        /* Near black */
             --text-color: #000000;        /* Black */
+            --new-darker-color: #B59C96;
+            --new-lighter-color: #D6C2BF;
         }
 
         body {
@@ -34,9 +36,9 @@
 
         /* Navbar Styling */
         .navbar {
-            background-color: white !important;
+            background-color: #ffffff !important;
             padding: 0.5rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px #9c3f618b;
         }
 
         .navbar-brand {
@@ -56,7 +58,7 @@
 
         .nav-link i {
             margin-right: 8px;
-            color: black !important;
+            color: #9c3f61 !important;
         }
 
         .nav-link:hover {
@@ -65,7 +67,7 @@
         }
 
         .nav-link.active {
-            background-color: var(--dark-violet);
+            background-color: var(--new-darker-color);
             color: white !important;
         }
 
@@ -114,7 +116,7 @@
         }
 
         .footer-links li a:hover {
-            color: var(--light-violet);
+            color: var(--new-lighter-color);
         }
 
         .social-links a {
@@ -125,7 +127,7 @@
             height: 40px;
             border-radius: 50%;
             background: var(--primary-color);
-            color: white;
+            color: white !important;
             margin: 0 0.5rem;
             transition: all 0.3s ease;
         }
@@ -150,7 +152,7 @@
         .newsletter-form .form-control {
             border-radius: 20px;
             padding: 0.75rem 1.5rem;
-            border: 2px solid var(--light-violet);
+            border: 2px solid var(--new-lighter-color);
         }
 
         .newsletter-form .btn {
@@ -160,17 +162,17 @@
 
         /* Scroll to Top Button */
         .scroll-top {
-            background-color: var(--primary-violet) !important;
+            background-color: var(--new-darker-color) !important;
             opacity: 0.9;
         }
 
         .scroll-top:hover {
-            background-color: var(--dark-violet);
+            background-color: var(--new-darker-color);
         }
 
         /* Page Loader */
         .loader {
-            border-top-color: var(--primary-violet);
+            border-top-color: var(--new-darker-color);
         }
         #logo {
             font-family: 'Playfair Display', serif;
@@ -300,7 +302,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="text-dark py-5" style="background-color: #ffcfd6;">
+    <footer class="text-dark py-5" style="background-color: #fee2ecb9 !important;">
         <div class="container">
             <div class="row">
                                 <div class="col-lg-3 col-md-6 mb-4">

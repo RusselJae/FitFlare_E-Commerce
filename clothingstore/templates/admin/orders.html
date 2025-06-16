@@ -107,7 +107,7 @@
                     <tbody>
                         {% for order in page_obj %}
                         <tr>
-                            <td>#{{ order.id }}</td>
+                            <td>#{{ order.user_order_number }}</td>
                             <td>{{ order.user.get_full_name|default:order.user.username }}</td>
                             <td>{{ order.created_at|date:"M d, Y H:i" }}</td>
                             <td>{{ order.items.count }}</td>

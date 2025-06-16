@@ -47,9 +47,17 @@ def product_list(request):
     category = request.GET.get('category', '')
     clothing_type = request.GET.get('clothing_type', '')
     price_range = request.GET.get('price_range', '')
+    search_query = request.GET.get('search', '')
     
     # Start with all products
     products = Product.objects.all()
+    
+    # Apply search filter if search query exists
+    if search_query:
+        products = products.filter(
+            models.Q(name__icontains=search_query) |
+            models.Q(description__icontains=search_query)
+        )
     
     # Filter by category if selected
     if category and category != 'all':
@@ -78,6 +86,7 @@ def product_list(request):
         'selected_category': category,
         'selected_clothing_type': clothing_type,
         'selected_price_range': price_range,
+        'search_query': search_query,
         'categories': [('all', 'All Categories')] + list(Product.CATEGORY_CHOICES),
         'clothing_types': [('all', 'All Types')] + list(Product.CLOTHING_TYPE_CHOICES),
         'price_ranges': [
